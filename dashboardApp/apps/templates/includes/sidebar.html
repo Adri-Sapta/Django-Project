@@ -1,0 +1,73 @@
+<div class="sidebar">
+    <div class="sidebar-wrapper">
+        <div class="logo">
+            <a href="javascript:void(0)" class="simple-text logo-mini">
+                CT
+            </a>
+            <a href="javascript:void(0)" class="simple-text logo-normal">
+                Creative Tim
+            </a>
+        </div>
+        <ul class="nav">
+            <!-- Dashboard -->
+            <li class="{% if segment == 'dashboard' %} active {% endif %}">
+                <a href="{% url 'index' %}">
+                    <i class="tim-icons icon-chart-pie-36"></i>
+                    <p>Dashboard</p>
+                </a>
+            </li>
+
+                <!-- Setting Master (Dropdown) -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed d-flex align-items-center justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#settingMasterMenu" aria-expanded="false" aria-controls="settingMasterMenu">
+                        <div>
+                            <i class="tim-icons icon-settings"></i>
+                            <p class="d-inline">Setting Master</p>
+                        </div>
+                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                    </a>
+                    <div class="collapse" id="settingMasterMenu">
+                        <ul class="nav flex-column pl-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'perumahan_list' %}">
+                                    <i class="fa fa-home"></i>
+                                    <p>Daftar Perumahan</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'penduduk_list' %}">
+                                    <i class="fa fa-users"></i>
+                                    <p>Daftar Penduduk</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+
+            <!-- Transaksi -->
+            <li class="{% if segment == 'transaksi' %} active {% endif %}">
+                <a href="#">
+                    <i class="tim-icons icon-wallet-43"></i>
+                    <p>Transaksi</p>
+                </a>
+            </li>
+
+            <!-- Reporting / Dashboard -->
+            <li class="{% if segment == 'reporting' %} active {% endif %}">
+                <a href="#">
+                    <i class="tim-icons icon-chart-bar-32"></i>
+                    <p>Reporting</p>
+                </a>
+            </li>
+
+            <!-- Logout -->
+            <li>
+                <a href="{% url 'logout' %}">
+                    <i class="tim-icons icon-button-power"></i>
+                    <p>Logout</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

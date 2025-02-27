@@ -1,0 +1,76 @@
+{% extends "layouts/base.html" %}
+{% load static %}  
+
+{% block title %} Edit Perumahan {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="title">Edit Perumahan</h5>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {% csrf_token %}
+              
+              <div class="form-group">
+                <label for="id_nama_perumahan">Nama Perumahan</label>
+                <input type="text" name="nama_perumahan" id="id_nama_perumahan" class="form-control" value="{{ form.instance.nama_perumahan }}">
+              </div>
+            
+              <div class="form-group">
+                <label for="id_alamat">Alamat</label>
+                <textarea name="alamat" id="id_alamat" class="form-control">{{ form.instance.alamat }}</textarea>
+              </div>
+            
+              <div class="row">
+                <div class="col-md-6 form-group">
+                  <label for="id_rt">RT</label>
+                  <input type="text" name="rt" id="id_rt" class="form-control" value="{{ form.instance.rt }}">
+                </div>
+                <div class="col-md-6 form-group">
+                  <label for="id_rw">RW</label>
+                  <input type="text" name="rw" id="id_rw" class="form-control" value="{{ form.instance.rw }}">
+                </div>
+              </div>
+            
+              <div class="form-group">
+                <label for="id_desa">Desa</label>
+                <input type="text" name="desa" id="id_desa" class="form-control" value="{{ form.instance.desa }}">
+              </div>
+            
+              <div class="row">
+                <div class="col-md-6 form-group">
+                  <label for="id_kecamatan">Kecamatan</label>
+                  <input type="text" name="kecamatan" id="id_kecamatan" class="form-control" value="{{ form.instance.kecamatan }}">
+                </div>
+                <div class="col-md-6 form-group">
+                  <label for="id_kabupaten">Kabupaten</label>
+                  <input type="text" name="kabupaten" id="id_kabupaten" class="form-control" value="{{ form.instance.kabupaten }}">
+                </div>
+              </div>
+
+              <!-- Input untuk koordinat -->
+              <div class="form-group">
+                <label for="alamat_maps">Alamat Maps</label>
+                <input type="text" id="alamat_maps" name="alamat_maps" class="form-control" value="{{ form.instance.alamat_maps }}">
+              </div>
+
+              <!-- Tempat untuk peta -->
+              <div id="map" style="height: 300px; width: 100%;"></div>
+
+              <button type="submit" class="btn btn-fill btn-primary">Simpan Perubahan</button>
+              <a href="{% url 'perumahan_list' %}" class="btn btn-secondary">Batal</a>
+            </form>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panggil Google Maps API & Script (pindah ke bawah agar elemen HTML sudah dimuat) -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+  <script src="{% static 'assets/js/plugins/google-maps.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %} Hapus Penduduk {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="title text-danger">Konfirmasi Hapus</h5>
+          </div>
+          <div class="card-body">
+            <p>Apakah Anda yakin ingin menghapus data penduduk berikut?</p>
+            <ul>
+              <li><strong>Nama Kepala Keluarga:</strong> {{ penduduk.nama_kk }}</li>
+              <li><strong>No Blok:</strong> {{ penduduk.no_blok }}</li>
+              <li><strong>Status:</strong> {{ penduduk.status }}</li>
+            </ul>
+            <form method="POST">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Hapus</button>
+              <a href="{% url 'index' %}" class="btn btn-secondary">Batal</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

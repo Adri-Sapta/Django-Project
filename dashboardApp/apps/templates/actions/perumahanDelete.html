@@ -1,0 +1,26 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Hapus Perumahan {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="title">Konfirmasi Hapus</h5>
+          </div>
+          <div class="card-body">
+            <p>Apakah Anda yakin ingin menghapus perumahan <strong>{{ perumahan.nama_perumahan }}</strong>?</p>
+            
+            <form method="POST">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+              <a href="{% url 'index' %}" class="btn btn-secondary">Batal</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
