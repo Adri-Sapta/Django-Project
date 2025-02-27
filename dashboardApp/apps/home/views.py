@@ -6,6 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 from django import template
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -109,3 +110,7 @@ def delete_penduduk(request, pk):
     get_object_or_404(MasterPenduduk, pk=pk).delete()
     messages.success(request, "Data Penduduk berhasil dihapus.")
     return redirect('index')
+
+def logout_view(request):
+    logout(request)  # Menghapus sesi pengguna
+    return redirect('/login/')  # Redirect ke halaman login setelah logout

@@ -24,6 +24,7 @@ urlpatterns = [
     # Transaksi (Placeholder, bisa ditambahkan nanti)
     # path('transaksi/', views.transaksi_view, name='transaksi'),
 
+    path('logout/', views.logout_view, name='logout'),
     # Matches any HTML file
     re_path(r'^.*\.*', views.pages, name='pages'),
 ]

@@ -21,14 +21,16 @@
         </div>
         <div class="card-body">
           <div class="tab-content" id="dataTabsContent">
+            
             <!-- Tab Perumahan -->
             <div class="tab-pane fade show active" id="perumahan" role="tabpanel">
+              <a href="{% url 'create_perumahan' %}" class="btn btn-primary mb-3">Tambah Data Perumahan</a>
               <div class="table-responsive">
                 <table class="table table-striped">
                   <thead class="text-primary">
                     <tr>
                       <th>No.</th>
-                      <th>Nama</th>
+                      <th>Nama Perumahan</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -38,7 +40,11 @@
                       <td>{{ forloop.counter }}</td>
                       <td>{{ perumahan.nama_perumahan }}</td>
                       <td>
-                        <a href="{% url 'perumahan_list' %}" class="btn btn-info btn-sm">Kelola Data</a>
+                        <a href="{% url 'update_perumahan' perumahan.id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <form method="POST" action="{% url 'delete_perumahan' perumahan.id %}" style="display:inline;">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                        </form>
                       </td>
                     </tr>
                     {% endfor %}
@@ -49,12 +55,14 @@
 
             <!-- Tab Penduduk -->
             <div class="tab-pane fade" id="penduduk" role="tabpanel">
+              <a href="{% url 'create_penduduk' %}" class="btn btn-primary mb-3">Tambah Data Penduduk</a>
               <div class="table-responsive">
                 <table class="table table-striped">
                   <thead class="text-primary">
                     <tr>
                       <th>No.</th>
                       <th>Nama KK</th>
+                      <th>Perumahan</th>
                       <th>Blok</th>
                       <th>Status</th>
                       <th>Aksi</th>
@@ -65,47 +73,23 @@
                     <tr>
                       <td>{{ forloop.counter }}</td>
                       <td>{{ penduduk.nama_kk }}</td>
+                      <td>{{ penduduk.perumahan.nama_perumahan }}</td>
                       <td>{{ penduduk.no_blok }}</td>
                       <td>{{ penduduk.status }}</td>
                       <td>
-                        <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#modalPenduduk{{ penduduk.id }}">
-                          Kelola Data
-                        </button>
+                        <a href="{% url 'update_penduduk' penduduk.id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <form method="POST" action="{% url 'delete_penduduk' penduduk.id %}" style="display:inline;">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                        </form>
                       </td>
                     </tr>
-
-                    <!-- Modal Popup -->
-                    <div class="modal fade" id="modalPenduduk{{ penduduk.id }}" tabindex="-1" role="dialog">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title">Kelola Data Penduduk</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                              <span aria-hidden="true">&times;</span>
-                            </button>
-                          </div>
-                          <div class="modal-body">
-                            <p><strong>Nama KK:</strong> {{ penduduk.nama_kk }}</p>
-                            <p><strong>Blok:</strong> {{ penduduk.no_blok }}</p>
-                            <p><strong>Status:</strong> {{ penduduk.status }}</p>
-                          </div>
-                          <div class="modal-footer">
-                            <a href="{% url 'update_penduduk' penduduk.id %}" class="btn btn-warning">Edit</a>
-                            <form method="POST" action="{% url 'delete_penduduk' penduduk.id %}" style="display:inline;">
-                              {% csrf_token %}
-                              <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                            </form>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Akhir Modal -->
                     {% endfor %}
                   </tbody>
                 </table>
               </div>
             </div>
+            
           </div>
         </div>
       </div>
@@ -113,6 +97,8 @@
   </div>
 </div>
 {% endblock content %}
+
+
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}{% endblock javascripts %}
