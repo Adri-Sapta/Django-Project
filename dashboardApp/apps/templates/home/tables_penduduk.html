@@ -1,0 +1,56 @@
+{% extends "layouts/base.html" %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-3">Daftar Penduduk</h3>
+        </div>
+        <div class="card-body">
+          <a href="{% url 'create_penduduk' %}" class="btn btn-primary mb-3">Tambah Data Penduduk</a>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead class="text-primary">
+                <tr>
+                  <th>No.</th>
+                  <th>Nama KK</th>
+                  <th>Blok</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for penduduk in penduduk_list %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ penduduk.nama_kk }}</td>
+                  <td>{{ penduduk.no_blok }}</td>
+                  <td>{{ penduduk.status }}</td>
+                  <td>
+                    <a href="{% url 'update_penduduk' penduduk.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    <form method="POST" action="{% url 'delete_penduduk' penduduk.id %}" style="display:inline;">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

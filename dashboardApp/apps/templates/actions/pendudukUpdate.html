@@ -1,0 +1,56 @@
+{% extends "layouts/base.html" %}
+{% load static %}  
+
+{% block title %} Edit Penduduk {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="title">Edit Penduduk</h5>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label for="id_perumahan">Perumahan</label>
+                <select name="perumahan" id="id_perumahan" class="form-control">
+                  {% for perumahan in perumahan_list %}
+                    <option value="{{ perumahan.id }}" {% if perumahan.id == penduduk.perumahan.id %}selected{% endif %}>
+                      {{ perumahan.nama_perumahan }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="id_no_blok">No Blok</label>
+                <input type="text" name="no_blok" id="id_no_blok" class="form-control" 
+                       value="{{ penduduk.no_blok }}" placeholder="Sebelumnya: {{ penduduk.no_blok }}">
+            </div>
+            
+            <div class="form-group">
+                <label for="id_nama_kk">Nama Kepala Keluarga</label>
+                <input type="text" name="nama_kk" id="id_nama_kk" class="form-control" 
+                       value="{{ penduduk.nama_kk }}" placeholder="Sebelumnya: {{ penduduk.nama_kk }}">
+            </div>
+              <div class="form-group">
+                <label for="id_status">Status</label>
+                <select name="status" id="id_status" class="form-control">
+                  <option value="pemilik tetap" {% if penduduk.status == "pemilik tetap" %}selected{% endif %}>Pemilik Tetap</option>
+                  <option value="kosong" {% if penduduk.status == "kosong" %}selected{% endif %}>Kosong</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-fill btn-primary">Update</button>
+              <a href="{% url 'penduduk_list' %}" class="btn btn-secondary">Batal</a>
+            </form>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
