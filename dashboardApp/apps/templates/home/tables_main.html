@@ -1,6 +1,5 @@
+{% extends "layouts/base.html" %} 
 
-
-<!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
@@ -25,37 +24,131 @@
             <!-- Tab Perumahan -->
             <div class="tab-pane fade show active" id="perumahan" role="tabpanel">
               <a href="{% url 'create_perumahan' %}" class="btn btn-primary mb-3">Tambah Data Perumahan</a>
-              <div class="table-responsive">
-                <table class="table table-striped">
-                  <thead class="text-primary">
-                    <tr>
-                      <th>No.</th>
-                      <th>Nama Perumahan</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for perumahan in perumahan_list %}
-                    <tr>
-                      <td>{{ forloop.counter }}</td>
-                      <td>{{ perumahan.nama_perumahan }}</td>
-                      <td>
-                        <a href="{% url 'update_perumahan' perumahan.id %}" class="btn btn-warning btn-sm">Edit</a>
-                        <form method="POST" action="{% url 'delete_perumahan' perumahan.id %}" style="display:inline;">
-                          {% csrf_token %}
-                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
-                        </form>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
+
+              <!-- Filter untuk Kabupaten -->
+              <form method="GET" action="{% url 'master_data' %}">
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    <label for="kabupaten">Kabupaten</label>
+                    <select name="kabupaten" id="kabupaten" class="form-control" onchange="fetchKecamatan()">
+                      <option value="">Pilih Kabupaten</option>
+                      {% for perumahan in perumahan_options %}
+                        <option value="{{ perumahan.kabupaten.id }}" {% if perumahan.kabupaten.id == kabupaten_filter %} selected {% endif %}>
+                          {{ perumahan.kabupaten.nama }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="form-group col-md-3">
+                    <button type="submit" class="btn btn-secondary mt-4">Filter</button>
+                    <a href="{% url 'master_data' %}?kabupaten=&kecamatan=" class="btn btn-danger mt-4">Reset</a>
+                  </div>
+                </div>
+              </form>
+
+              {% if perumahan_page %}
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead class="text-primary">
+                      <tr>
+                        <th>No.</th>
+                        <th>Nama Perumahan</th>
+                        <th>Alamat</th>
+                        <th>Kabupaten</th>
+                        <th>Kecamatan</th>
+                        <th>Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for perumahan in perumahan_page %}
+                      <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ perumahan.nama_perumahan }}</td>
+                        <td>{{ perumahan.alamat }}</td>
+                        <td>{{ perumahan.kabupaten }}</td>
+                        <td>{{ perumahan.kecamatan }}</td>
+                        <td>
+                          <a href="{% url 'update_perumahan' perumahan.id %}" class="btn btn-warning btn-sm">Edit</a>
+                          <form method="POST" action="{% url 'delete_perumahan' perumahan.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                          </form>
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Paginasi Perumahan -->
+                <nav>
+                  <ul class="pagination justify-content-center">
+                    <div class="pagination">
+                      {% if perumahan_page.has_previous %}
+                          <a class="btn btn-outline-primary" href="?page=1&tab=perumahan">First</a>
+                          <a class="btn btn-outline-primary" href="?page={{ perumahan_page.previous_page_number }}&tab=perumahan">Previous</a>
+                      {% endif %}
+                  
+                      <span class="btn btn-light">Page {{ perumahan_page.number }} of {{ perumahan_page.paginator.num_pages }}</span>
+                  
+                      {% if perumahan_page.has_next %}
+                          <a class="btn btn-outline-primary" href="?page={{ perumahan_page.next_page_number }}&tab=perumahan">Next</a>
+                          <a class="btn btn-outline-primary" href="?page={{ perumahan_page.paginator.num_pages }}&tab=perumahan">Last</a>
+                      {% endif %}
+                    </div>
+                  </ul>
+                </nav>
+
+              {% else %}
+                <div class="alert alert-warning text-center">
+                  <p>Data Perumahan Kosong</p>
+                </div>
+              {% endif %}
             </div>
 
             <!-- Tab Penduduk -->
             <div class="tab-pane fade" id="penduduk" role="tabpanel">
               <a href="{% url 'create_penduduk' %}" class="btn btn-primary mb-3">Tambah Data Penduduk</a>
+
+              <!-- Form Filter -->
+              <form method="GET" class="mb-3">
+                <div class="row">
+                  <div class="col-md-4">
+                    <label for="filterPerumahan">Perumahan:</label>
+                    <select name="perumahan" id="filterPerumahan" class="form-control">
+                      <option value="">-- Semua --</option>
+                      {% for perumahan in perumahan_options %}
+                      <option value="{{ perumahan.id }}" {% if request.GET.perumahan == perumahan.id|stringformat:"s" %}selected{% endif %}>
+                        {{ perumahan.nama_perumahan }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="filterStatus">Status:</label>
+                    <select name="status" id="filterStatus" class="form-control">
+                      <option value="">-- Semua --</option>
+                      {% for status in status_options %}
+                      <option value="{{ status }}" {% if request.GET.status == status %}selected{% endif %}>{{ status }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="filterBlok">Blok:</label>
+                    <select name="blok" id="filterBlok" class="form-control">
+                      <option value="">-- Semua --</option>
+                      {% for blok in blok_options %}
+                      <option value="{{ blok }}" {% if request.GET.blok == blok %}selected{% endif %}>{{ blok }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-success mt-3">Filter</button>
+                <a href="{% url 'master_data' %}" class="btn btn-secondary mt-3">Reset</a>
+              </form>
+
+              {% if penduduk_page %}
               <div class="table-responsive">
                 <table class="table table-striped">
                   <thead class="text-primary">
@@ -69,7 +162,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for penduduk in penduduk_list %}
+                    {% for penduduk in penduduk_page %}
                     <tr>
                       <td>{{ forloop.counter }}</td>
                       <td>{{ penduduk.nama_kk }}</td>
@@ -88,8 +181,32 @@
                   </tbody>
                 </table>
               </div>
-            </div>
-            
+          
+              <!-- Pagination Controls -->
+              <nav>
+                <ul class="pagination justify-content-center">
+                  <div class="pagination">
+                    {% if penduduk_page.has_previous %}
+                        <a class="btn btn-outline-primary" href="?page=1&tab=penduduk">First</a>
+                        <a class="btn btn-outline-primary" href="?page={{ penduduk_page.previous_page_number }}&tab=penduduk">Previous</a>
+                    {% endif %}
+                
+                    <span class="btn btn-light">Page {{ penduduk_page.number }} of {{ penduduk_page.paginator.num_pages }}</span>
+                
+                    {% if penduduk_page.has_next %}
+                        <a class="btn btn-outline-primary" href="?page={{ penduduk_page.next_page_number }}&tab=penduduk">Next</a>
+                        <a class="btn btn-outline-primary" href="?page={{ penduduk_page.paginator.num_pages }}&tab=penduduk">Last</a>
+                    {% endif %}
+                  </div>
+                </ul>
+              </nav>
+          
+            {% else %}
+              <div class="alert alert-warning text-center">
+                <p>Data Penduduk Kosong</p>
+              </div>
+            {% endif %}
+          </div>
           </div>
         </div>
       </div>
@@ -98,7 +215,52 @@
 </div>
 {% endblock content %}
 
+{% block javascripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Ambil tab terakhir yang diklik dari localStorage
+    var activeTab = localStorage.getItem("activeTab");
+    if (activeTab) {
+        // Nonaktifkan tab yang aktif sebelumnya
+        document.querySelector(".nav-link.active").classList.remove("active");
+        document.querySelector(".tab-pane.show.active").classList.remove("show", "active");
 
+        // Aktifkan tab yang disimpan di localStorage
+        document.getElementById(activeTab).classList.add("active");
+        document.getElementById(activeTab.replace("-tab", "")).classList.add("show", "active");
+    }
 
-<!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+    // Simpan tab yang diklik ke localStorage
+    document.querySelectorAll(".nav-link").forEach(tab => {
+        tab.addEventListener("click", function() {
+            localStorage.setItem("activeTab", this.id);
+        });
+    });
+});
+</script>
+
+<script type="text/javascript">
+  function fetchKecamatan() {
+    var kabupatenId = document.getElementById('kabupaten').value;
+    var kecamatanSelect = document.getElementById('kecamatan');
+    
+    // Kosongkan pilihan kecamatan sebelumnya
+    kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+    
+    // Jika kabupaten terpilih, ambil data kecamatan terkait
+    if (kabupatenId) {
+      fetch(`/get_kecamatan_by_kabupaten/${kabupatenId}/`)
+        .then(response => response.json())
+        .then(data => {
+          data.kecamatan.forEach(function(kecamatan) {
+            var option = document.createElement("option");
+            option.value = kecamatan.id;
+            option.textContent = kecamatan.nama;
+            kecamatanSelect.appendChild(option);
+          });
+        })
+        .catch(error => console.log(error));
+    }
+  }
+</script>
+{% endblock javascripts %}

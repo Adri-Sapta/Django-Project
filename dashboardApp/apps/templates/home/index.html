@@ -5,19 +5,8 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
 
-{% if messages %}
-  {% for message in messages %}
-    <div class="alert alert-{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}danger{% else %}info{% endif %} alert-dismissible fade show" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-  {% endfor %}
-{% endif %}
-
 {% block content %}
-  {% include "home/tables_main.html" %}
+  {%include "home/dashboard.html" %}
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->

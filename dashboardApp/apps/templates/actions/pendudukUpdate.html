@@ -18,7 +18,7 @@
               <div class="form-group">
                 <label for="id_perumahan">Perumahan</label>
                 <select name="perumahan" id="id_perumahan" class="form-control">
-                  {% for perumahan in perumahan_list %}
+                  {% for perumahan in perumahan_options %}
                     <option value="{{ perumahan.id }}" {% if perumahan.id == penduduk.perumahan.id %}selected{% endif %}>
                       {{ perumahan.nama_perumahan }}
                     </option>
@@ -46,7 +46,7 @@
               </div>
 
               <button type="submit" class="btn btn-fill btn-primary">Update</button>
-              <a href="{% url 'penduduk_list' %}" class="btn btn-secondary">Batal</a>
+              <a href="{% url 'master_data' %}" class="btn btn-secondary">Batal</a>
             </form>  
           </div>
         </div>

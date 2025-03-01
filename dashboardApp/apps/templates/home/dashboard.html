@@ -1,0 +1,67 @@
+{% extends "layouts/base.html" %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-3">Dashboard Statistik</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <!-- Chart untuk jumlah penduduk per perumahan -->
+            <div class="col-md-12">
+              <div id="chart-container" style="width: 100%; height: 400px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<!-- Highcharts -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch("{% url 'dashboard_data' %}") // Panggil data dari Django view
+      .then(response => response.json())
+      .then(data => {
+        Highcharts.chart("chart-container", {
+          chart: {
+            type: "column",
+          },
+          title: {
+            text: "Jumlah Penduduk per Perumahan",
+          },
+          xAxis: {
+            categories: data.categories,
+            title: {
+              text: "Perumahan",
+            },
+          },
+          yAxis: {
+            title: {
+              text: "Jumlah Penduduk",
+            },
+          },
+          series: [{
+            name: "Penduduk",
+            data: data.values,
+            color: "#007bff"
+          }]
+        });
+      })
+      .catch(error => console.error("Error fetching data:", error));
+  });
+</script>
+{% endblock javascripts %}

@@ -18,7 +18,7 @@
               <div class="form-group">
                 <label for="id_perumahan">Perumahan</label>
                 <select name="perumahan" id="id_perumahan" class="form-control">
-                  {% for perumahan in perumahan_list %}
+                  {% for perumahan in perumahan_options %}
                     <option value="{{ perumahan.id }}">{{ perumahan.nama_perumahan }}</option>
                   {% endfor %}
                 </select>

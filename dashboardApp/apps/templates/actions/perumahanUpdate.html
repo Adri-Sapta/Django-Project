@@ -43,34 +43,120 @@
             
               <div class="row">
                 <div class="col-md-6 form-group">
-                  <label for="id_kecamatan">Kecamatan</label>
-                  <input type="text" name="kecamatan" id="id_kecamatan" class="form-control" value="{{ form.instance.kecamatan }}">
-                </div>
-                <div class="col-md-6 form-group">
                   <label for="id_kabupaten">Kabupaten</label>
-                  <input type="text" name="kabupaten" id="id_kabupaten" class="form-control" value="{{ form.instance.kabupaten }}">
+                  <select name="kabupaten" id="id_kabupaten" class="form-control">
+                    {% for kabupaten in kabupaten_list %}
+                      <option value="{{ kabupaten.id }}" {% if form.instance.kecamatan.kabupaten.id == kabupaten.id %}selected{% endif %}>
+                        {{ kabupaten.nama }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                
+                <div class="col-md-6 form-group">
+                  <label for="id_kecamatan">Kecamatan</label>
+                  <select name="kecamatan" id="id_kecamatan" class="form-control">
+                    {% for kecamatan in kecamatan_list %}
+                      <option value="{{ kecamatan.id }}" {% if form.instance.kecamatan.id == kecamatan.id %}selected{% endif %}>
+                        {{ kecamatan.nama }}
+                      </option>
+                    {% endfor %}
+                  </select>
                 </div>
               </div>
 
-              <!-- Input untuk koordinat -->
-              <div class="form-group">
-                <label for="alamat_maps">Alamat Maps</label>
-                <input type="text" id="alamat_maps" name="alamat_maps" class="form-control" value="{{ form.instance.alamat_maps }}">
-              </div>
+            <!-- Input untuk koordinat -->
+            <div class="form-group">
+              <label for="latitude">Latitude</label>
+              <input type="text" id="latitude" name="latitude" class="form-control" value="{{ form.instance.latitude }}" readonly>
+            </div>
 
-              <!-- Tempat untuk peta -->
-              <div id="map" style="height: 300px; width: 100%;"></div>
+            <div class="form-group">
+              <label for="longitude">Longitude</label>
+              <input type="text" id="longitude" name="longitude" class="form-control" value="{{ form.instance.longitude }}" readonly>
+            </div>
 
-              <button type="submit" class="btn btn-fill btn-primary">Simpan Perubahan</button>
-              <a href="{% url 'perumahan_list' %}" class="btn btn-secondary">Batal</a>
-            </form>  
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+            <div class="form-group">
+              <label for="alamat_maps">Alamat Maps</label>
+              <input type="text" id="alamat_maps" name="alamat_maps" class="form-control" value="{{ form.instance.alamat_maps }}" readonly>
+            </div>
 
-  <!-- Panggil Google Maps API & Script (pindah ke bawah agar elemen HTML sudah dimuat) -->
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
-  <script src="{% static 'assets/js/plugins/google-maps.js' %}"></script>
-{% endblock %}
+            <!-- Tempat untuk peta -->
+            <div id="map" style="height: 300px; width: 100%;"></div>
+
+            <button type="submit" class="btn btn-fill btn-primary">Simpan Perubahan</button>
+            <a href="{% url 'master_data' %}" class="btn btn-secondary">Batal</a>
+
+            <!-- Leaflet.js (OpenStreetMap) -->
+            <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+            <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+            <script>
+              // Initialize Map
+              document.addEventListener("DOMContentLoaded", function () {
+                  var lat = parseFloat("{{ form.instance.latitude|default:-6.914744 }}");
+                  var lng = parseFloat("{{ form.instance.longitude|default:107.609810 }}");
+              
+                  var map = L.map('map').setView([lat, lng], 13);
+              
+                  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                      attribution: '© OpenStreetMap contributors'
+                  }).addTo(map);
+              
+                  var marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+              
+                  marker.on('dragend', function (event) {
+                      var position = marker.getLatLng();
+                      updateLocation(position.lat, position.lng);
+                  });
+              
+                  map.on('click', function (event) {
+                      marker.setLatLng(event.latlng);
+                      updateLocation(event.latlng.lat, event.latlng.lng);
+                  });
+              
+                  function updateLocation(lat, lng) {
+                      document.getElementById('latitude').value = lat;
+                      document.getElementById('longitude').value = lng;
+                      document.getElementById('alamat_maps').value = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}`;
+                  }
+              
+                  // ==================== FILTER KECAMATAN BERDASARKAN KABUPATEN ====================
+                  const kecamatanDropdown = document.getElementById("id_kecamatan");
+                  const kabupatenDropdown = document.getElementById("id_kabupaten");
+              
+                  const kecamatanData = JSON.parse(document.getElementById("kecamatan-data").textContent);
+              
+                  function updateKecamatanOptions(selectedKabupaten) {
+                      kecamatanDropdown.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                      if (kecamatanData[selectedKabupaten]) {
+                          kecamatanData[selectedKabupaten].forEach(function (kecamatan) {
+                              const option = document.createElement("option");
+                              option.value = kecamatan.id;
+                              option.textContent = kecamatan.nama_kecamatan;
+                              // Menambahkan atribut selected untuk kecamatan yang sudah dipilih
+                              if (kecamatan.id == "{{ form.instance.kecamatan.id }}") {
+                                  option.selected = true;
+                              }
+                              kecamatanDropdown.appendChild(option);
+                          });
+                      }
+                  }
+              
+                  // Run on page load to update kecamatan based on kabupaten
+                  const selectedKabupaten = kabupatenDropdown.value;
+                  if (selectedKabupaten) {
+                      updateKecamatanOptions(selectedKabupaten);
+                  }
+              
+                  kabupatenDropdown.addEventListener("change", function () {
+                      const selectedKabupaten = this.value;
+                      updateKecamatanOptions(selectedKabupaten);
+                  });
+              });
+              </script>
+              
+              <script id="kecamatan-data" type="application/json">
+                {{ kecamatan_json|safe }}
+              </script>
+              {% endblock %}

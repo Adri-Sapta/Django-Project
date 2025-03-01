@@ -11,15 +11,15 @@
         <ul class="nav">
             <!-- Dashboard -->
             <li class="{% if segment == 'dashboard' %} active {% endif %}">
-                <a href="#">
+                <a href="{% url 'index' %}">
                     <i class="tim-icons icon-chart-pie-36"></i>
                     <p>Dashboard</p>
                 </a>
             </li>
 
-                <!-- Setting Master (Dropdown) -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'index' %}">
+                <!-- Setting Master  -->
+                <li class="{% if segment == 'master' %} active {% endif %}">
+                    <a href="{% url 'master_data' %}">
                         <div>
                             <i class="tim-icons icon-settings"></i>
                             <p class="d-inline">Setting Master</p>
