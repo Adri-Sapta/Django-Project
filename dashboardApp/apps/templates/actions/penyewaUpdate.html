@@ -1,0 +1,64 @@
+{% extends "layouts/base.html" %}
+{% load static %}  
+
+{% block title %} Edit Penyewa {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard_data' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'master_data' %}">Setting Master</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Data Penyewa</li>
+              </ol>
+            <h5 class="title">Edit Penyewa</h5>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label>Nama Kepala Keluarga</label>
+                <input type="text" value="{{ penyewa.penduduk.nama_kk }}" class="form-control" readonly>
+                <input type="hidden" name="penduduk" value="{{ penyewa.penduduk.id }}">
+              </div>
+
+              <div class="form-group">
+                <label for="id_nama_penyewa">Nama Penyewa</label>
+                <input type="text" name="nama_penyewa" id="id_nama_penyewa" class="form-control" 
+                       value="{{ penyewa.nama_penyewa }}" placeholder="Sebelumnya: {{ penyewa.nama_penyewa }}">
+              </div>
+
+              <div class="form-group">
+                <label for="id_tgl_mulai_sewa">Tanggal Mulai Sewa</label>
+                <input type="date" name="tgl_mulai_sewa" id="id_tgl_mulai_sewa" class="form-control" 
+                       value="{{ penyewa.tgl_mulai_sewa|date:'Y-m-d' }}">
+              </div>
+
+              <div class="form-group">
+                <label for="id_tgl_terakhir_sewa">Tanggal Terakhir Sewa</label>
+                <input type="date" name="tgl_terakhir_sewa" id="id_tgl_terakhir_sewa" class="form-control" 
+                       value="{{ penyewa.tgl_terakhir_sewa|date:'Y-m-d' }}">
+              </div>
+
+              <div class="form-group">
+                <label for="id_status">Status</label>
+                <select name="status" id="id_status" class="form-control">
+                  <option value="1" {% if penyewa.status == 1 %}selected{% endif %}>Aktif</option>
+                  <option value="0" {% if penyewa.status == 0 %}selected{% endif %}>Tidak Aktif</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-fill btn-primary">Update</button>
+              <a href="{% url 'master_data' %}" class="btn btn-secondary">Batal</a>
+            </form>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

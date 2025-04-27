@@ -1,0 +1,63 @@
+{% extends "layouts/base.html" %}
+{% load static %}  
+
+{% block title %} Edit Anggota Keluarga {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard_data' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'master_data' %}">Setting Master</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Data Keluarga</li>
+              </ol>
+            <h5 class="title">Edit Anggota Keluarga</h5>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {% csrf_token %}
+          
+              <div class="form-group">
+                  <label>Nama Kepala Keluarga</label>
+                  <input type="text" value="{{ anggota_keluarga.penduduk.nama_kk }}" class="form-control" readonly>
+                  <input type="hidden" name="penduduk" value="{{ anggota_keluarga.penduduk.id }}">
+              </div>
+          
+              <div class="form-group">
+                  <label for="id_nama">Nama Anggota</label>
+                  <input type="text" name="nama" id="id_nama" class="form-control" 
+                         value="{{ anggota_keluarga.nama }}" 
+                         placeholder="Sebelumnya: {{ anggota_keluarga.nama }}" required>
+              </div>
+          
+              <div class="form-group">
+                  <label for="id_status">Status</label>
+                  <select name="status" id="id_status" class="form-control" required>
+                      <option value="ayah" {% if anggota_keluarga.status == "ayah" %}selected{% endif %}>Ayah</option>
+                      <option value="ibu" {% if anggota_keluarga.status == "ibu" %}selected{% endif %}>Ibu</option>
+                      <option value="anak" {% if anggota_keluarga.status == "anak" %}selected{% endif %}>Anak</option>
+                      <option value="saudara" {% if anggota_keluarga.status == "saudara" %}selected{% endif %}>Saudara</option>
+                      <option value="lainnya" {% if anggota_keluarga.status == "lainnya" %}selected{% endif %}>Lainnya</option>
+                  </select>
+              </div>
+          
+              <div class="form-group">
+                  <label for="id_tgl_lahir">Tanggal Lahir</label>
+                  <input type="date" name="tgl_lahir" id="id_tgl_lahir" class="form-control" 
+                         value="{{ anggota_keluarga.tgl_lahir|date:'Y-m-d' }}" 
+                         placeholder="Sebelumnya: {{ anggota_keluarga.tgl_lahir|date:'d-m-Y' }}" required>
+              </div>
+          
+              <button type="submit" class="btn btn-fill btn-primary">Update</button>
+              <a href="{% url 'master_data' %}" class="btn btn-secondary">Batal</a>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

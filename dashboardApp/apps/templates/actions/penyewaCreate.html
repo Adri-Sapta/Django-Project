@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 {% load static %}  
 
-{% block title %} Tambah Penduduk {% endblock %}
+{% block title %} Tambah Penyewa {% endblock %}
 
 {% block content %}
   <div class="content">
@@ -13,38 +13,40 @@
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'dashboard_data' %}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'master_data' %}">Setting Master</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Tambah Data Penduduk</li>
+                <li class="breadcrumb-item active" aria-current="page">Tambah Data Penyewa</li>
               </ol>
-            <h5 class="title">Tambah Penduduk</h5>
+            <h5 class="title">Tambah Penyewa</h5>
           </div>
           <div class="card-body">
             <form method="POST">
               {% csrf_token %}
 
               <div class="form-group">
-                <label for="id_perumahan">Perumahan</label>
-                <select name="perumahan" id="id_perumahan" class="form-control">
-                  {% for perumahan in perumahan_options %}
-                    <option value="{{ perumahan.id }}">{{ perumahan.nama_perumahan }}</option>
-                  {% endfor %}
-                </select>
+                <label>Nama Kepala Keluarga</label>
+                <input type="text" value="{{ penduduk.nama_kk }}" class="form-control" readonly>
+                <input type="hidden" name="penduduk" value="{{ penduduk.id }}">
               </div>
 
               <div class="form-group">
-                <label for="id_no_blok">No Blok</label>
-                <input type="text" name="no_blok" id="id_no_blok" class="form-control">
+                <label for="id_nama_penyewa">Nama Penyewa</label>
+                <input type="text" name="nama_penyewa" id="id_nama_penyewa" class="form-control">
               </div>
 
               <div class="form-group">
-                <label for="id_nama_kk">Nama Kepala Keluarga</label>
-                <input type="text" name="nama_kk" id="id_nama_kk" class="form-control">
+                <label for="id_tgl_mulai_sewa">Tanggal Mulai Sewa</label>
+                <input type="date" name="tgl_mulai_sewa" id="id_tgl_mulai_sewa" class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label for="id_tgl_terakhir_sewa">Tanggal Terakhir Sewa</label>
+                <input type="date" name="tgl_terakhir_sewa" id="id_tgl_terakhir_sewa" class="form-control">
               </div>
 
               <div class="form-group">
                 <label for="id_status">Status</label>
                 <select name="status" id="id_status" class="form-control">
-                  <option value="pemilik tetap">Pemilik Tetap</option>
-                  <option value="kosong">Kosong</option>
+                  <option value="1">Aktif</option>
+                  <option value="0">Tidak Aktif</option>
                 </select>
               </div>
 

@@ -1,0 +1,86 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %} Update Data Transaksi {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard_data' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'transaksi' %}">Transaksi</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Update Transaksi</li>
+              </ol>
+            </nav>
+            <h5 class="title">Update Data Transaksi Pembayaran</h5>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label for="id_warga">Nama Warga</label>
+                <select name="id_warga" id="id_warga" class="form-control">
+                  {% for warga in warga_options %}
+                    <option value="{{ warga.id }}" {% if form.instance.id_warga.id == warga.id %}selected{% endif %}>{{ warga.nama_kk }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="id_pemasukan">Sumber Iuran</label>
+                <select name="id_pemasukan" id="id_pemasukan" class="form-control">
+                  {% for pemasukan in pemasukan_options %}
+                    <option value="{{ pemasukan.id }}" {% if form.instance.id_pemasukan.id == pemasukan.id %}selected{% endif %}>{{ pemasukan.sumber_pemasukan }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="id_nominal">Nominal</label>
+                <input type="number" name="nominal" id="id_nominal" class="form-control" value="{{ form.instance.nominal }}" required>
+              </div>
+
+              <div class="form-group">
+                <label for="id_tgl_pembayaran">Tanggal Pembayaran</label>
+                <input type="date" name="tgl_pembayaran" id="id_tgl_pembayaran" class="form-control" value="{{ form.instance.tgl_pembayaran|date:'Y-m-d' }}" required>
+              </div>
+
+              <div class="form-group">
+                <label for="id_periode_bulan">Periode Bulan</label>
+                <select name="periode_bulan" id="id_periode_bulan" class="form-control" required>
+                  {% for bulan in bulan_options %}
+                    <option value="{{ bulan }}" {% if bulan == form.instance.periode_bulan %}selected{% endif %}>{{ bulan }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="id_periode_tahun">Periode Tahun</label>
+                <select name="periode_tahun" id="id_periode_tahun" class="form-control" required>
+                  {% for tahun in tahun_options %}
+                    <option value="{{ tahun }}" {% if tahun == form.instance.periode_tahun %}selected{% endif %}>{{ tahun }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="id_status">Status Pembayaran</label>
+                <select name="status" id="id_status" class="form-control">
+                  <option value="1" {% if form.instance.status == 1 %}selected{% endif %}>Lunas</option>
+                  <option value="0" {% if form.instance.status == 0 %}selected{% endif %}>Belum Lunas</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-fill btn-primary">Update</button>
+            </form>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

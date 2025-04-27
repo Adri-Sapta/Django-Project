@@ -1,0 +1,61 @@
+{% extends "layouts/base.html" %}
+{% load static %}  
+
+{% block title %} Edit Pekerja {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard_data' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'master_data' %}">Setting Master</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Data Pekerja</li>
+              </ol>
+            </nav>
+            <h5 class="title">Edit Pekerja</h5>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label for="id_nama_kk">Nama Pekerja</label>
+                <input type="text" name="nama_pekerja" id="id_nama_pekerja" class="form-control" 
+                       value="{{ pekerja.nama_pekerja }}" placeholder="Sebelumnya: {{ pekerja.nama_pekerja }}">
+              </div>
+
+              <div class="form-group">
+                <label for="id_status">Role</label>
+                <select name="status" id="id_status" class="form-control">
+                  <option value="Security" {% if pekerja.role == "Security" %}selected{% endif %}>Security</option>
+                  <option value="Petugas Kebersihan" {% if pekerja.role == "Petugas Kebersihan" %}selected{% endif %}>Petugas Kebersihan</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="id_status">Status</label>
+                <select name="status" id="id_status" class="form-control">
+                  <option value="1" {% if penyewa.status == 1 %}selected{% endif %}>Aktif</option>
+                  <option value="0" {% if penyewa.status == 0 %}selected{% endif %}>Tidak Aktif</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="id_tgl_mulai_kerja">Tanggal Mulai Kerja</label>
+                <input type="date" name="tgl_mulai_kerja" id="id_tgl_mulai_kerja" class="form-control" 
+                       value="{{ pekerja.tgl_mulai_bekerja|date:'Y-m-d' }}">
+              </div>
+
+              <button type="submit" class="btn btn-fill btn-primary">Update</button>
+              <a href="{% url 'master_data' %}?tab=pekerja" class="btn btn-secondary">Batal</a>
+            </form>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

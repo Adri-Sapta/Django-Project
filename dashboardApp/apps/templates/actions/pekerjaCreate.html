@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 {% load static %}  
 
-{% block title %} Tambah Penduduk {% endblock %}
+{% block title %} Tambah Data Pekerja {% endblock %}
 
 {% block content %}
   <div class="content">
@@ -13,39 +13,39 @@
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'dashboard_data' %}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'master_data' %}">Setting Master</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Tambah Data Penduduk</li>
+                <li class="breadcrumb-item active" aria-current="page">Tambah Data Pekerja</li>
               </ol>
-            <h5 class="title">Tambah Penduduk</h5>
+            </nav>
+            <h5 class="title">Tambah Pekerja</h5>
           </div>
           <div class="card-body">
             <form method="POST">
               {% csrf_token %}
+              <div class="form-group">
+                <label for="id_nama_pekerja">Nama Pekerja</label>
+                <input type="text" name="nama_pekerja" id="id_nama_pekerja" class="form-control">
+              </div>
 
               <div class="form-group">
-                <label for="id_perumahan">Perumahan</label>
-                <select name="perumahan" id="id_perumahan" class="form-control">
-                  {% for perumahan in perumahan_options %}
-                    <option value="{{ perumahan.id }}">{{ perumahan.nama_perumahan }}</option>
-                  {% endfor %}
+                <label for="id_role">Role</label>
+                <select name="role" id="id_role" class="form-control">
+                  <option value="Security">Security</option>
+                  <option value="Petugas Kebersihan">Petugas Kebersihan</option>
+                  <option value="Marbot">Marbot</option>
                 </select>
-              </div>
-
-              <div class="form-group">
-                <label for="id_no_blok">No Blok</label>
-                <input type="text" name="no_blok" id="id_no_blok" class="form-control">
-              </div>
-
-              <div class="form-group">
-                <label for="id_nama_kk">Nama Kepala Keluarga</label>
-                <input type="text" name="nama_kk" id="id_nama_kk" class="form-control">
               </div>
 
               <div class="form-group">
                 <label for="id_status">Status</label>
                 <select name="status" id="id_status" class="form-control">
-                  <option value="pemilik tetap">Pemilik Tetap</option>
-                  <option value="kosong">Kosong</option>
+                  <option value="1">Aktif</option>
+                  <option value="0">Tidak Aktif</option>
                 </select>
+              </div>
+
+              <div class="form-group">
+                <label for="id_tgl_mulai_bekerja">Tanggal Mulai Bekerja</label>
+                <input type="date" name="tgl_mulai_bekerja" id="id_tgl_mulai_bekerja" class="form-control">
               </div>
 
               <button type="submit" class="btn btn-fill btn-primary">Simpan</button>

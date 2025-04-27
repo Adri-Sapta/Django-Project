@@ -1,0 +1,32 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %} Hapus Pekerja {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="title text-danger">Konfirmasi Hapus</h5>
+          </div>
+          <div class="card-body">
+            <p>Apakah Anda yakin ingin menghapus data pekerja berikut?</p>
+            <ul>
+              <li><strong>Kode:</strong> {{ pekerja.kode_petugas}}</li>
+              <li><strong>Nama Pekerja:</strong> {{ pekerja.nama_pekerja }}</li>
+              <li><strong>Role:</strong> {{ pekerja.role }}</li>
+              <li><strong>Status:</strong> {{ pekerja.status }}</li>
+            </ul>
+            <form method="POST">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Hapus</button>
+              <a href="{% url 'master_data' %}?tab=pekerja" class="btn btn-secondary">Batal</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

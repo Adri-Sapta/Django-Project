@@ -1,0 +1,46 @@
+{% extends "layouts/base.html" %}
+{% load static %}  
+
+{% block title %} Edit Penyewa {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard_data' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'master_data' %}">Setting Master</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Data Pemasukan</li>
+              </ol>
+            <h5 class="title">Edit Sumber Pemasukan</h5>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label for="id_pemasukan">Sumber Pemasukan</label>
+                <input type="text" name="sumber_pemasukan" id="id_pemasukan" class="form-control" 
+                       value="{{ pemasukan.sumber_pemasukan}}" placeholder="Sebelumnya: {{ pemasukan.sumber_pemasukan }}">
+              </div>
+
+              <div class="form-group">
+                <label for="id_status">Status</label>
+                <select name="status" id="id_status" class="form-control">
+                  <option value="1" {% if penyewa.status == 1 %}selected{% endif %}>Aktif</option>
+                  <option value="0" {% if penyewa.status == 0 %}selected{% endif %}>Tidak Aktif</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-fill btn-primary">Update</button>
+              <a href="{% url 'master_data' %}" class="btn btn-secondary">Batal</a>
+            </form>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

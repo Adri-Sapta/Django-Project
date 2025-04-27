@@ -1,0 +1,42 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %} Hapus Transaksi {% endblock %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard_data' %}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'transaksi' %}">Transaksi</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Hapus Transaksi</li>
+              </ol>
+            </nav>
+            <h5 class="title text-danger">Konfirmasi Hapus Transaksi</h5>
+          </div>
+          <div class="card-body">
+            <p>Apakah kamu yakin ingin menghapus transaksi ini?</p>
+            <ul>
+              <li><strong>Nama Warga:</strong> {{ transaksi.id_warga.nama_kk }}</li>
+              <li><strong>Sumber Iuran:</strong> {{ transaksi.id_pemasukan.sumber_pemasukan }}</li>
+              <li><strong>Nominal:</strong> Rp{{ transaksi.nominal|floatformat:0 }}</li>
+              <li><strong>Tanggal Pembayaran:</strong> {{ transaksi.tgl_pembayaran }}</li>
+              <li><strong>Periode:</strong> {{ transaksi.periode_bulan }} {{ transaksi.periode_tahun }}</li>
+              <li><strong>Status:</strong> {% if transaksi.status == 1 %}Lunas{% else %}Belum Lunas{% endif %}</li>
+            </ul>
+
+            <form method="POST">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Hapus</button>
+              <a href="{% url 'transaksi' %}" class="btn btn-secondary">Batal</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

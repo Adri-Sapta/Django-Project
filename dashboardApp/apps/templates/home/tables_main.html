@@ -1,6 +1,8 @@
 {% extends "layouts/base.html" %} 
 
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+{% endblock stylesheets %}
 
 {% block content %}
 <div class="content">
@@ -8,10 +10,22 @@
     <div class="col-md-12">
       <div class="card">
         <div class="card-header">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url 'index' %}">Dashboard</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Setting Master</li>
+            </ol>
+          </nav>
           <h3 class="mb-3">Master Data</h3>
           <ul class="nav nav-tabs" id="dataTabs" role="tablist">
             <li class="nav-item">
               <a class="nav-link active" id="perumahan-tab" data-toggle="tab" href="#perumahan" role="tab">Perumahan</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="pekerja-tab" data-toggle="tab" href="#pekerja" role="tab">Pekerja</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="pekerja-tab" data-toggle="tab" href="#pemasukan" role="tab">Pemasukan</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" id="penduduk-tab" data-toggle="tab" href="#penduduk" role="tab">Penduduk</a>
@@ -23,7 +37,7 @@
             
             <!-- Tab Perumahan -->
             <div class="tab-pane fade show active" id="perumahan" role="tabpanel">
-              <a href="{% url 'create_perumahan' %}" class="btn btn-primary mb-3">Tambah Data Perumahan</a>
+              <a href="{% url 'create_perumahan' %}" class="btn btn-primary mb-3">Tambah Data Perumahan  <i class="fa fa-plus-circle"></i></a>
 
               <!-- Filter untuk Kabupaten -->
               <form method="GET" action="{% url 'master_data' %}">
@@ -41,8 +55,8 @@
                   </div>
 
                   <div class="form-group col-md-3">
-                    <button type="submit" class="btn btn-secondary mt-4">Filter</button>
-                    <a href="{% url 'master_data' %}?kabupaten=&kecamatan=" class="btn btn-danger mt-4">Reset</a>
+                    <button type="submit" class="btn btn-secondary mt-4" data-bs-toggle="tooltip" title="Filter"><i class="bi bi-filter"></i></button>
+                    <a href="{% url 'master_data' %}?kabupaten=&kecamatan=" class="btn btn-danger mt-4" data-bs-toggle="tooltip" title="Reset"><i class="bi bi-arrow-counterclockwise"></i></a>
                   </div>
                 </div>
               </form>
@@ -69,10 +83,10 @@
                         <td>{{ perumahan.kabupaten }}</td>
                         <td>{{ perumahan.kecamatan }}</td>
                         <td>
-                          <a href="{% url 'update_perumahan' perumahan.id %}" class="btn btn-warning btn-sm">Edit</a>
+                          <a href="{% url 'update_perumahan' perumahan.id %}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil"></i></a>
                           <form method="POST" action="{% url 'delete_perumahan' perumahan.id %}" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" data-bs-toggle="tooltip" title="Hapus"><i class="bi bi-trash"></i></button>
                           </form>
                         </td>
                       </tr>
@@ -107,9 +121,150 @@
               {% endif %}
             </div>
 
+            <!-- Tab Pekerja -->
+            <div class="tab-pane fade" id="pekerja" role="tabpanel">
+              <a href="{% url 'create_pekerja' %}" class="btn btn-primary mb-3">Tambah Data Pekerja <i class="fa fa-plus-circle"></i></a>
+    
+              <!-- Form Filter -->
+              <form method="GET" class="mb-3">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="filterRole">Role:</label>
+                    <select name="role" id="filterRole" class="form-control">
+                      <option value="">-- Semua --</option>
+                      {% for role in role_options %}
+                      <option value="{{ role }}" {% if request.GET.role == role %}selected{% endif %}>{{ role }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-success mt-3" data-bs-toggle="tooltip" title="Filter"><i class="bi bi-filter"></i></button>
+                <a href="{% url 'master_data' %}?tab=pekerja" class="btn btn-secondary mt-3" data-bs-toggle="tooltip" title="Reset"><i class="bi bi-arrow-counterclockwise"></i></a> 
+              </form>
+    
+              {% if pekerja_page %}
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead class="text-primary">
+                    <tr>
+                      <th>No.</th>
+                      <th>Kode Petugas</th>
+                      <th>Nama Pekerja</th>
+                      <th>Role</th>
+                      <th>Status</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for pekerja in pekerja_page %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ pekerja.kode_petugas }}</td>
+                      <td>{{ pekerja.nama_pekerja }}</td>
+                      <td>{{ pekerja.role }}</td>
+                      <td>{{ pekerja.get_status_display}}</td>
+                      <td>
+                        <a href="{% url 'update_pekerja' pekerja.id %}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil"></i></a>
+                        <form method="POST" action="{% url 'delete_pekerja' pekerja.id %}" style="display:inline;">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" data-bs-toggle="tooltip" title="Hapus"><i class="bi bi-trash"></i></button>
+                        </form>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+    
+                <!-- Pagination Controls -->
+                <nav>
+                  <ul class="pagination justify-content-center">
+                    <div class="pagination">
+                      {% if pekerja_page.has_previous %}
+                        <a class="btn btn-outline-primary" href="?page=1&tab=pekerja">First</a>
+                        <a class="btn btn-outline-primary" href="?page={{ pekerja_page.previous_page_number }}&tab=pekerja">Previous</a>
+                      {% endif %}
+                    
+                      <span class="btn btn-light">Page {{ pekerja_page.number }} of {{ pekerja_page.paginator.num_pages }}</span>
+                    
+                      {% if pekerja_page.has_next %}
+                        <a class="btn btn-outline-primary" href="?page={{ pekerja_page.next_page_number }}&tab=pekerja">Next</a>
+                        <a class="btn btn-outline-primary" href="?page={{ pekerja_page.paginator.num_pages }}&tab=pekerja">Last</a>
+                      {% endif %}
+                    </div>
+                  </ul>
+                </nav>
+              </div>
+              {% else %}
+              <div class="alert alert-warning text-center">
+                <p>Data pekerja tidak ditemukan.</p>
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Tab Pemasukan -->
+            <div class="tab-pane fade" id="pemasukan" role="tabpanel">
+              <a href="{% url 'create_pemasukan' %}" class="btn btn-primary mb-3">Tambah Data Pemasukan <i class="fa fa-plus-circle"></i></a>
+    
+              {% if pemasukan_page %}
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead class="text-primary">
+                    <tr>
+                      <th>No.</th>
+                      <th>Kode Pemasukan</th>
+                      <th>Sumber Pemasukan</th>
+                      <th>Status</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for pemasukan in pemasukan_page %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ pemasukan.kode }}</td>
+                      <td>{{ pemasukan.sumber_pemasukan }}</td>
+                      <td>{{ pemasukan.get_status_display}}</td>
+                      <td>
+                        <a href="{% url 'update_pemasukan' pemasukan.id %}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil"></i></a>
+                        <form method="POST" action="{% url 'delete_pemasukan' pemasukan.id %}" style="display:inline;">
+                          {% csrf_token %}
+                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" data-bs-toggle="tooltip" title="Hapus"><i class="bi bi-trash"></i></button>
+                        </form>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+    
+                <!-- Pagination Controls -->
+                <nav>
+                  <ul class="pagination justify-content-center">
+                    <div class="pagination">
+                      {% if pemasukan_page.has_previous %}
+                        <a class="btn btn-outline-primary" href="?page=1&tab=pemasukan">First</a>
+                        <a class="btn btn-outline-primary" href="?page={{ pemasukan_page.previous_page_number }}&tab=pemasukan">Previous</a>
+                      {% endif %}
+                    
+                      <span class="btn btn-light">Page {{ pemasukan_page.number }} of {{ pemasukan_page.paginator.num_pages }}</span>
+                    
+                      {% if pemasukan_page.has_next %}
+                        <a class="btn btn-outline-primary" href="?page={{ pemasukan_page.next_page_number }}&tab=pemasukan">Next</a>
+                        <a class="btn btn-outline-primary" href="?page={{ pemasukan_page.paginator.num_pages }}&tab=pemasukan">Last</a>
+                      {% endif %}
+                    </div>
+                  </ul>
+                </nav>
+              </div>
+              {% else %}
+              <div class="alert alert-warning text-center">
+                <p>Data sumber pemasukan tidak ditemukan.</p>
+              </div>
+              {% endif %}
+            </div>
+
             <!-- Tab Penduduk -->
             <div class="tab-pane fade" id="penduduk" role="tabpanel">
-              <a href="{% url 'create_penduduk' %}" class="btn btn-primary mb-3">Tambah Data Penduduk</a>
+              <a href="{% url 'create_penduduk' %}" class="btn btn-primary mb-3">Tambah Data Penduduk  <i class="fa fa-plus-circle"></i></a>
 
               <!-- Form Filter -->
               <form method="GET" class="mb-3">
@@ -144,8 +299,8 @@
                     </select>
                   </div>
                 </div>
-                <button type="submit" class="btn btn-success mt-3">Filter</button>
-                <a href="{% url 'master_data' %}" class="btn btn-secondary mt-3">Reset</a>
+                <button type="submit" class="btn btn-success mt-3" data-bs-toggle="tooltip" title="Filter"><i class="bi bi-filter"></i></button>
+                <a href="{% url 'master_data' %}" class="btn btn-secondary mt-3" data-bs-toggle="tooltip" title="Reset"><i class="bi bi-arrow-counterclockwise"></i></a> 
               </form>
 
               {% if penduduk_page %}
@@ -170,44 +325,173 @@
                       <td>{{ penduduk.no_blok }}</td>
                       <td>{{ penduduk.status }}</td>
                       <td>
-                        <a href="{% url 'update_penduduk' penduduk.id %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'update_penduduk' penduduk.id %}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil"></i></a>
                         <form method="POST" action="{% url 'delete_penduduk' penduduk.id %}" style="display:inline;">
                           {% csrf_token %}
-                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')">Hapus</button>
+                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus?')" data-bs-toggle="tooltip" title="Hapus"><i class="bi bi-trash"></i></button>
                         </form>
+                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#detailModal{{ penduduk.id }}" data-bs-toggle="tooltip" title="Lihat Detail">
+                          <i class="bi bi-eye"></i>
+                        </button>
                       </td>
                     </tr>
                     {% endfor %}
                   </tbody>
                 </table>
+                <!-- Pagination Controls -->
+                <nav>
+                  <ul class="pagination justify-content-center">
+                    <div class="pagination">
+                      {% if penduduk_page.has_previous %}
+                          <a class="btn btn-outline-primary" href="?page=1&tab=penduduk">First</a>
+                          <a class="btn btn-outline-primary" href="?page={{ penduduk_page.previous_page_number }}&tab=penduduk">Previous</a>
+                      {% endif %}
+                  
+                      <span class="btn btn-light">Page {{ penduduk_page.number }} of {{ penduduk_page.paginator.num_pages }}</span>
+                  
+                      {% if penduduk_page.has_next %}
+                          <a class="btn btn-outline-primary" href="?page={{ penduduk_page.next_page_number }}&tab=penduduk">Next</a>
+                          <a class="btn btn-outline-primary" href="?page={{ penduduk_page.paginator.num_pages }}&tab=penduduk">Last</a>
+                      {% endif %}
+                    </div>
+                  </ul>
+                </nav>
+                <!-- Modal Detail Penduduk -->
+                {% for penduduk in penduduk_page %}
+                <div class="modal fade" id="detailModal{{ penduduk.id }}" tabindex="-1" aria-labelledby="modalLabel{{ penduduk.id }}" aria-hidden="true">
+                  <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="modalLabel{{ penduduk.id }}">Detail Penduduk - {{ penduduk.nama }}</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body">
+                              <!-- Tab Navigasi -->
+                              <ul class="nav nav-tabs" id="subTab-{{ penduduk.id }}">
+                                  <li class="nav-item">
+                                      <a class="nav-link active" data-bs-toggle="tab" href="#keluarga-{{ penduduk.id }}">Anggota Keluarga</a>
+                                  </li>
+                                  <li class="nav-item">
+                                      <a class="nav-link" {% if request.GET.tab == 'penyewa' %} active {% endif %}" data-bs-toggle="tab" href="#penyewa-{{ penduduk.id }}">Waktu Sewa</a>
+                                  </li>
+                              </ul>
+
+                            <!-- Tab Content -->
+                            <div class="tab-content mt-3">
+                                <!-- Anggota Keluarga -->
+                                <div class="tab-pane fade show active" id="keluarga-{{ penduduk.id }}">
+                                    <a href="{% url 'create_anggota_keluarga' penduduk.id %}" class="btn btn-success btn-sm">Tambah Data  <i class="fa fa-plus-circle"></i></a>
+                                    {% if penduduk.anggota_keluarga.all %}
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Nama Anggota</th>
+                                                    <th>Status</th>
+                                                    <th>Tanggal Lahir</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for anggota in penduduk.anggota_keluarga.all %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ anggota.nama }}</td>
+                                                    <td>{{ anggota.get_status_display }}</td>
+                                                    <td>{{ anggota.tgl_lahir }}</td>
+                                                    <td>
+                                                        <a href="{% url 'update_anggota_keluarga' anggota.id %}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil"></i>                                                        </a>
+                                                        <form method="POST" action="{% url 'delete_anggota_keluarga' anggota.id %}" style="display:inline;">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Hapus anggota ini?')" data-bs-toggle="tooltip" title="Hapus"><i class="bi bi-trash"></i></button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                {% if anggota_keluarga_page.has_other_pages %}
+                                                <nav>
+                                                    <ul class="pagination">
+                                                        {% if anggota_keluarga_page.has_previous %}
+                                                            <li class="page-item"><a class="page-link" href="?tab=anggota_keluarga&anggota_keluarga_page=1">First</a></li>
+                                                            <li class="page-item"><a class="page-link" href="?tab=anggota_keluarga&anggota_keluarga_page={{ anggota_keluarga_page.previous_page_number }}">Previous</a></li>
+                                                        {% endif %}
+
+                                                        <li class="page-item active"><span class="page-link">{{ anggota_keluarga_page.number }} of {{ anggota_keluarga_page.paginator.num_pages }}</span></li>
+
+                                                        {% if anggota_keluarga_page.has_next %}
+                                                            <li class="page-item"><a class="page-link" href="?tab=anggota_keluarga&anggota_keluarga_page={{ anggota_keluarga_page.next_page_number }}">Next</a></li>
+                                                            <li class="page-item"><a class="page-link" href="?tab=anggota_keluarga&anggota_keluarga_page={{ anggota_keluarga_page.paginator.num_pages }}">Last</a></li>
+                                                        {% endif %}
+                                                    </ul>
+                                                </nav>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% else %}
+                                    <p class="text-muted">Belum ada anggota keluarga.</p>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Waktu Sewa -->
+                                <div class="tab-pane fade" id="penyewa-{{ penduduk.id }}">
+                                    <a href="{% url 'create_penyewa' penduduk.id %}" class="btn btn-success btn-sm">Tambah Data  <i class="fa fa-plus-circle"></i></a>
+                                    {% if penduduk.penyewa.all %}
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tanggal Mulai Sewa</th>
+                                                    <th>Tanggal Terakhir Sewa</th>
+                                                    <th>Status</th>
+                                                    <th>Sisa Waktu</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for penyewa in penduduk.penyewa.all %}
+                                                <tr>
+                                                    <td>{{ penyewa.tgl_mulai_sewa }}</td>
+                                                    <td>{{ penyewa.tgl_terakhir_sewa }}</td>
+                                                    <td>{{ penyewa.get_status_display }}</td>
+                                                    <td class="countdown" data-end="{{ penyewa.tgl_terakhir_sewa|date:'Y-m-d' }}"></td>
+                                                    <td>
+                                                        <a href="{% url 'update_penyewa' penyewa.id %}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Edit"><i class="bi bi-pencil"></i></a>
+                                                        <form method="POST" action="{% url 'delete_penyewa' penyewa.id %}" style="display:inline;">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Hapus penyewa ini?')" data-bs-toggle="tooltip" title="Hapus"><i class="bi bi-trash"></i></button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {% else %}
+                                    <p class="text-muted">Belum ada penyewa.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
               </div>
-          
-              <!-- Pagination Controls -->
-              <nav>
-                <ul class="pagination justify-content-center">
-                  <div class="pagination">
-                    {% if penduduk_page.has_previous %}
-                        <a class="btn btn-outline-primary" href="?page=1&tab=penduduk">First</a>
-                        <a class="btn btn-outline-primary" href="?page={{ penduduk_page.previous_page_number }}&tab=penduduk">Previous</a>
-                    {% endif %}
-                
-                    <span class="btn btn-light">Page {{ penduduk_page.number }} of {{ penduduk_page.paginator.num_pages }}</span>
-                
-                    {% if penduduk_page.has_next %}
-                        <a class="btn btn-outline-primary" href="?page={{ penduduk_page.next_page_number }}&tab=penduduk">Next</a>
-                        <a class="btn btn-outline-primary" href="?page={{ penduduk_page.paginator.num_pages }}&tab=penduduk">Last</a>
-                    {% endif %}
-                  </div>
-                </ul>
-              </nav>
-          
+            </div>
+            {% endfor %}
             {% else %}
               <div class="alert alert-warning text-center">
                 <p>Data Penduduk Kosong</p>
               </div>
             {% endif %}
+            </div>
           </div>
-          </div>
+        </div>
         </div>
       </div>
     </div>
@@ -263,4 +547,33 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const countdowns = document.querySelectorAll(".countdown");
+      countdowns.forEach(function(item) {
+          let endDate = new Date(item.dataset.end).getTime();
+          let interval = setInterval(function() {
+              let now = new Date().getTime();
+              let distance = endDate - now;
+              
+              if (distance <= 0) {
+                  item.innerHTML = "<span class='text-danger'>Sudah Berakhir</span>";
+                  clearInterval(interval);
+              } else {
+                  let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                  item.innerHTML = days + " hari lagi";
+              }
+          }, 1000);
+      });
+  });
+</script>
+
+<script>
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
+</script>
+
 {% endblock javascripts %}
